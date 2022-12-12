@@ -8,7 +8,7 @@
         var recaptchaScriptID = "google-recaptcha";
         var scriptName = "formsleads.js";
         var cssId = 'formsleads.css';
-        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads/formsleads.css";
+        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@master/source/formsleads.css";
 
         function domReady(fn) {
             // see if DOM is already available
