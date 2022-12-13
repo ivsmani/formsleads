@@ -193,8 +193,15 @@
         }
 
         async function fetchFormData(appKey, notch) {
-            const response = await fetch(apiUrl + '?appkey=' + appKey + '&notch=' + notch);
-            return await response.json(); //extracts JSON from the http response
+            return await fetch(apiUrl + '?appkey=' + appKey + '&notch=' + notch)
+            .then((res) => {
+                if (res.ok) {
+                    return res.json();
+                }
+
+                throw new Error({ message: 'Something went wrong' });
+            })
+            .catch((err) => Promise.reject(err));
         }
 
         function addRecaptcha(rc, wrapper, rcWidget) {
