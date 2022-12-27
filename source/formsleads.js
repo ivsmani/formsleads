@@ -103,16 +103,26 @@
             };
         }
 
-        function createFormInput(details, successEl, errorEl) {
+        function createFormInput(details, successEl, errorEl, cs) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
             inputWrapper.classList.add("formsleads-form__input-wrapper");
 
+            if (cs.fieldWrapper) {
+                inputWrapper.style = cs.fieldWrapper;
+            }
+
+
             if (basicType) {
                 var inputElement = document.createElement("input");
                 
                 inputElement.classList.add("other__input");
+                
+                if (cs.input) {
+                    inputElement.style = cs.input;
+                }
+                
                 inputElement.type = details.type;
                 inputElement.placeholder = details.placeholder;
                 inputElement.name = details.field_name;
@@ -121,11 +131,19 @@
                 
                 var labelElement = document.createElement("label");
                 labelElement.innerHTML = details.label;
+                if (cs.label) {
+                    labelElement.style = cs.label;
+                }
 
                 inputWrapper.appendChild(inputElement);
                 inputWrapper.appendChild(labelElement);
             } else if (details.type === "select") {
                 var selectElement = document.createElement("select");
+
+                if (cs.select) {
+                    selectElement.style = cs.select;
+                }
+
                 selectElement.name = details.field_name;
                 selectElement.required = Boolean(details.is_required);
                 selectElement.onchange = onInputValueChange(successEl, errorEl);
@@ -146,6 +164,10 @@
 
                 var labelElement = document.createElement("label");
                 labelElement.innerHTML = details.label;
+
+                if (cs.label) {
+                    labelElement.style = cs.label;
+                }
                 
                 inputWrapper.appendChild(selectElement);
                 inputWrapper.appendChild(labelElement);
@@ -182,7 +204,12 @@
                 });
 
                 var labelElement = document.createElement("label");
-                labelElement.classList.add("formsleads-check-radio-title")
+                labelElement.classList.add("formsleads-check-radio-title");
+                
+                if (cs.label) {
+                    labelElement.style = cs.label;
+                }
+                
                 labelElement.innerHTML = details.label;
                 
                 inputWrapper.appendChild(labelElement);
@@ -265,6 +292,7 @@
             render: function (args) {
                 let fldsRipple = null;
                 let formContainer = null;
+                const customStyle = args.customStyle || {};
 
                 domReady(function() {
                     injectCSS();
@@ -297,12 +325,22 @@
                         var formTitle = document.createElement("h4");
                         formTitle.innerHTML = args.formTitle || res.title || "Form";
                         formTitle.classList.add("formsleads-formtitle");
+                        
+                        if (customStyle.formTitle) {
+                            formTitle.style = customStyle.formTitle;
+                        }
+
                         formTitleContainer.appendChild(formTitle);
                         formContainer.appendChild(formTitleContainer);
 
                         // Creating and adding form element
                         var formElement = document.createElement("form");
                         formElement.classList.add("formsleads-form");
+
+                        if (customStyle.form) {
+                            formElement.style = customStyle.form;
+                        }
+
                         formElement.id = "formsleads-form";
                         formContainer.appendChild(formElement);
 
@@ -314,7 +352,7 @@
 
                         // Creating and adding form inputs
                         res.fields.forEach(function (formInput) {
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement);
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle);
                             formElement.appendChild(eleToAppend);
                         });
 
@@ -326,6 +364,9 @@
 
                         var recaptchaWrapper = document.createElement("div");
                         recaptchaWrapper.classList.add("formsleads-recaptcha-wrapper");
+                        if (customStyle.recaptchaWrapper) {
+                            recaptchaWrapper.style = customStyle.recaptchaWrapper;
+                        }
                         formElement.appendChild(recaptchaWrapper);
                         var rcWidget = addRecaptcha(res.recaptcha, recaptchaWrapper, rcWidget);
 
@@ -337,9 +378,19 @@
 
                         var submitBtnWrapper = document.createElement("div");
                         submitBtnWrapper.classList.add("formsleads-form-submit-btn-wrapper");
+
+                        if (customStyle.buttonWrapper) {
+                            submitBtnWrapper.style = customStyle.buttonWrapper;
+                        }
+                        
                         var formsleadsBtn = document.createElement("input");
                         formsleadsBtn.type = "submit";
                         formsleadsBtn.classList.add("formsleads-form-submit-btn");
+
+                        if (customStyle.button) {
+                            formsleadsBtn.style = customStyle.button;
+                        }
+
                         formsleadsBtn.value = args.buttonText || "Submit";
                         submitBtnWrapper.appendChild(formsleadsBtn);
                         formElement.appendChild(submitBtnWrapper);
