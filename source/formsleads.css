@@ -15,6 +15,10 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.formsleads-form * {
+    box-sizing: border-box;
+}
+
 .disable-formsleads-form  {
     opacity: .7;
     pointer-events: none;
