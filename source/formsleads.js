@@ -6,9 +6,9 @@
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
         var recaptchaSiteKey = "6Ld9h6cgAAAAAHWk24MkMs-N8JMASQIC-tG7oTMK";
         var recaptchaScriptID = "google-recaptcha";
-        var scriptName = "formsleads.js";
-        var cssId = 'formsleads.css';
-        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@master/source/formsleads.css";
+        var scriptName = "formsleads.min.js";
+        var cssId = 'formsleads.min.css';
+        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@master/source/formsleads.min.css";
 
         function domReady(fn) {
             // see if DOM is already available
