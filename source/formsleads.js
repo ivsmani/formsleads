@@ -1,6 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
+        var version = "1.0.1";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -8,7 +9,7 @@
         var recaptchaScriptID = "google-recaptcha";
         var scriptName = "formsleads.min.js";
         var cssId = 'formsleads.min.css';
-        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@1.0.0/source/formsleads.min.css";
+        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@" + version + "/source/formsleads.min.css";
 
         function domReady(fn) {
             // see if DOM is already available
