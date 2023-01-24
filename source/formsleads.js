@@ -265,6 +265,10 @@
         
                                 if (myObj.status == 1) {
                                     formEle.reset();
+                                    
+                                    if (grecaptcha) {
+                                        grecaptcha.reset(window.renderedRCWidget[args.notch]);
+                                    }
 
                                     if (args.afterSubmit && typeof args.afterSubmit == "function") {
                                         args.afterSubmit();
