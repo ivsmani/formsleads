@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.0.3";
+        var version = "1.0.4";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -104,11 +104,18 @@
             };
         }
 
-        function createFormInput(details, successEl, errorEl, cs) {
+        function makeItAHiddenField(fieldEl, value) {
+            fieldEl.type = 'hidden';
+            fieldEl.value = value;
+        }
+
+        function createFormInput(details, successEl, errorEl, cs, hiddenF) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
-            inputWrapper.classList.add("formsleads-form__input-wrapper");
+            if (!hiddenF) {
+                inputWrapper.classList.add("formsleads-form__input-wrapper");
+            }
 
             if (cs.fieldWrapper) {
                 inputWrapper.style = cs.fieldWrapper;
@@ -129,6 +136,11 @@
                 inputElement.name = details.field_name;
                 inputElement.required = Boolean(details.is_required);
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
+
+                
+                if (hiddenF) {
+                    makeItAHiddenField(inputElement, hiddenF.value);
+                }
                 
                 var labelElement = document.createElement("label");
                 labelElement.innerHTML = details.label;
@@ -137,7 +149,9 @@
                 }
 
                 inputWrapper.appendChild(inputElement);
-                inputWrapper.appendChild(labelElement);
+                if (!hiddenF) {
+                    inputWrapper.appendChild(labelElement);
+                }
             } else if (details.type === "select") {
                 var selectElement = document.createElement("select");
 
@@ -153,6 +167,10 @@
                 firstOption.value = "";
                 firstOption.innerHTML = "Select a " + details.label;
                 selectElement.appendChild(firstOption);
+
+                if (hiddenF) {
+                    makeItAHiddenField(selectElement, hiddenF.value);
+                }
 
                 details.options.forEach(function (option, op) {
                     var optionElement = document.createElement("option");
@@ -171,14 +189,16 @@
                 }
                 
                 inputWrapper.appendChild(selectElement);
-                inputWrapper.appendChild(labelElement);
+                if (!hiddenF) {
+                    inputWrapper.appendChild(labelElement);
+                }
             } else if (['radio', 'checkbox'].includes(details.type)) {
                 inputWrapper.classList.remove("formsleads-form__input-wrapper");
                 inputWrapper.classList.add("formsleads-form__radio-wrapper");
 
                 var radioWrapper = document.createElement("div");
                 
-                details.options.forEach(function (option, r) {
+                details.options.every(function (option, r) {
                     var radioContainer = document.createElement("div");
                     radioContainer.classList.add("formsleads-form__radio-container");
 
@@ -196,12 +216,18 @@
                     radioElement.placeholder = details.placeholder;
                     radioElement.onchange = onInputValueChange(successEl, errorEl);
 
+                    if (hiddenF) {
+                        makeItAHiddenField(radioElement, hiddenF.value);
+                    }
+
                     radioLabel.innerHTML = option;
                     radioLabel.htmlFor = "fl-radio" + r;
 
                     radioContainer.appendChild(radioElement);
                     radioContainer.appendChild(radioLabel);
                     radioWrapper.appendChild(radioContainer);
+
+                    return !hiddenF;
                 });
 
                 var labelElement = document.createElement("label");
@@ -213,7 +239,9 @@
                 
                 labelElement.innerHTML = details.label;
                 
-                inputWrapper.appendChild(labelElement);
+                if (!hiddenF) {
+                    inputWrapper.appendChild(labelElement);
+                }
                 inputWrapper.appendChild(radioWrapper);
             }
             
@@ -292,6 +320,20 @@
             }
         }
 
+        function createTextElement(text, textStyle, formElement) {
+            if (!!text) {
+                var textElement = document.createElement('div');
+                textElement.classList.add("formsleads-form-text-element");
+                textElement.innerHTML = text;
+    
+                if (textStyle) {
+                    textElement.style = textStyle;
+                }
+    
+                formElement.appendChild(textElement);
+            }
+        }
+
         window.formsleads = {
             params: getParams(),
             render: function (args) {
@@ -355,9 +397,13 @@
                         var errorElement = document.createElement("div");
                         errorElement.classList.add('formsleads-error-msg');
 
+                        // Text below title
+                        createTextElement(args.text.belowTitle, customStyle.belowTitleText, formElement);
+
                         // Creating and adding form inputs
-                        res.fields.forEach(function (formInput) {
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle);
+                        res.fields.forEach(function (formInput, fieldIndex) {
+                            var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (fieldIndex + 1) });
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, hiddenField);
                             formElement.appendChild(eleToAppend);
                         });
 
@@ -372,6 +418,10 @@
                         if (customStyle.recaptchaWrapper) {
                             recaptchaWrapper.style = customStyle.recaptchaWrapper;
                         }
+
+                        // Text above recaptcha
+                        createTextElement(args.text.aboveRecaptcha, customStyle.aboveRecaptchaText, formElement);
+
                         formElement.appendChild(recaptchaWrapper);
                         var rcWidget = addRecaptcha(res.recaptcha, recaptchaWrapper, rcWidget);
 
@@ -398,7 +448,15 @@
 
                         formsleadsBtn.value = args.buttonText || "Submit";
                         submitBtnWrapper.appendChild(formsleadsBtn);
+
+                        // Text above Submit button
+                        createTextElement(args.text.aboveSubmit, customStyle.aboveSubmitText, formElement);
+
                         formElement.appendChild(submitBtnWrapper);
+
+                        // Text below Submit button
+                        createTextElement(args.text.belowSubmit, customStyle.belowSubmitText, formElement);
+
                         formElement.onsubmit = onFormsLeadsFormSubmit(args, res.recaptcha, errorElement, successElement, formsleadsBtn, formElement);
                     });
                 }).catch(function() {
