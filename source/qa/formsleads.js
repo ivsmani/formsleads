@@ -342,6 +342,7 @@
                 let fldsRipple = null;
                 let formContainer = null;
                 const customStyle = args.customStyle || {};
+                const texts = args.text || {};
 
                 domReady(function() {
                     injectCSS();
@@ -400,7 +401,7 @@
                         errorElement.classList.add('formsleads-error-msg');
 
                         // Text below title
-                        createTextElement(args.text.belowTitle, customStyle.belowTitleText, formElement);
+                        createTextElement(texts.belowTitle, customStyle.belowTitleText, formElement);
 
                         // Creating and adding form inputs
                         res.fields.forEach(function (formInput, fieldIndex) {
@@ -422,7 +423,7 @@
                         }
                         
                         // Text above recaptcha
-                        createTextElement(args.text.aboveRecaptcha, customStyle.aboveRecaptchaText, formElement);
+                        createTextElement(texts.aboveRecaptcha, customStyle.aboveRecaptchaText, formElement);
 
                         formElement.appendChild(recaptchaWrapper);
                         var rcWidget = addRecaptcha(res.recaptcha, recaptchaWrapper, rcWidget);
@@ -452,12 +453,12 @@
                         submitBtnWrapper.appendChild(formsleadsBtn);
 
                         // Text above Submit button
-                        createTextElement(args.text.aboveSubmit, customStyle.aboveSubmitText, formElement);
+                        createTextElement(texts.aboveSubmit, customStyle.aboveSubmitText, formElement);
 
                         formElement.appendChild(submitBtnWrapper);
 
                         // Text below Submit button
-                        createTextElement(args.text.belowSubmit, customStyle.belowSubmitText, formElement);
+                        createTextElement(texts.belowSubmit, customStyle.belowSubmitText, formElement);
 
                         formElement.onsubmit = onFormsLeadsFormSubmit(args, res.recaptcha, errorElement, successElement, formsleadsBtn, formElement);
                     });
