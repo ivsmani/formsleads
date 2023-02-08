@@ -169,6 +169,7 @@
                 selectElement.appendChild(firstOption);
 
                 if (hiddenF) {
+                    selectElement.hidden = 'hidden';
                     makeItAHiddenField(selectElement, hiddenF.value);
                 }
 
