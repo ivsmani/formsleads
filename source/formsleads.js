@@ -134,7 +134,7 @@
                 inputElement.type = details.type;
                 inputElement.placeholder = details.placeholder;
                 inputElement.name = details.field_name;
-                inputElement.required = Boolean(details.is_required);
+                inputElement.required = details.is_required == "true";
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
 
                 
@@ -160,12 +160,12 @@
                 }
 
                 selectElement.name = details.field_name;
-                selectElement.required = Boolean(details.is_required);
+                selectElement.required = details.is_required == "true";
                 selectElement.onchange = onInputValueChange(successEl, errorEl);
 
                 var firstOption = document.createElement("option");
                 firstOption.value = "";
-                firstOption.innerHTML = "Select a " + details.label;
+                firstOption.innerHTML = "Select " + (['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'].includes(details.label.charAt(0)) ? "an " : "a ") + details.label;
                 selectElement.appendChild(firstOption);
 
                 if (hiddenF) {
@@ -207,7 +207,7 @@
                     radioElement.classList.add("radio__input");
                     radioElement.id = "fl-radio" + r;
                     if (r === 0 && details.type === "radio") {
-                        radioElement.required = Boolean(details.is_required);
+                        radioElement.required = details.is_required == "true";
                     }
 
                     var radioLabel = document.createElement("label");
@@ -293,16 +293,17 @@
                                 const myObj = JSON.parse(xmlHttp.responseText);
         
                                 if (myObj.status == 1) {
+                                    successEl.innerHTML = args.successText || myObj.suc_message;
+
                                     formEle.reset();
                                     
-                                    if (grecaptcha) {
+                                    if (window.grecaptcha) {
                                         grecaptcha.reset(window.renderedRCWidget[args.notch]);
                                     }
 
                                     if (args.afterSubmit && typeof args.afterSubmit == "function") {
                                         args.afterSubmit();
                                     }
-                                    successEl.innerHTML = args.successText || myObj.suc_message;
                                 } else {
                                     errorEl.innerHTML = myObj.error_message;
                                 }
