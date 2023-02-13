@@ -2,9 +2,19 @@
     <body>
         <script src="./source/qa/formsleads.js?app-key=uutnbgstyvg4778djghk" ></script>
         <div id="fl-form" ></div>
+        <div id="fl-form-2" ></div>
+        <button onclick="onClick()" >onClick</button>
         <script>
+            function onClick() {
+                formsleads.setValue('fl-form', 7, "example")
+            }
+
             formsleads.render({
                 wrapperId: "fl-form",
+                notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09"
+            });
+            formsleads.render({
+                wrapperId: "fl-form-2",
                 notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09",
                 hiddenFields: [
                     { index: 10, value: "Founder" }

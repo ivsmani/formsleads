@@ -69,3 +69,16 @@ hiddenFields: [
     }
 ]
 ```
+
+## Setting a custom value for a field
+Now you can set any value (string) to any field with a new function `setValue`.
+
+Arguements for the function includes
+`wrapperId` > The id of the div wrapper you have used to wrap the form.
+`fieldIndex` > The position or number of the field (1, 2, ...).
+`Value` > The value of the field you want to set.
+
+Usage
+```
+formsleads.setValue(wrapperId, fieldIndex, Value)
+```

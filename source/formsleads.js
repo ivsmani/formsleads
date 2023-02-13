@@ -106,7 +106,7 @@
 
         function makeItAHiddenField(fieldEl, value) {
             fieldEl.type = 'hidden';
-            fieldEl.value = value;
+            fieldEl.value = value || '';
         }
 
         function createFormInput(details, successEl, errorEl, cs, hiddenF) {
@@ -269,6 +269,7 @@
 
         function onFormsLeadsFormSubmit(args, rc, errorEl, successEl, submitBtn, formEle) {
             return function (e) {
+                e.preventDefault();
                 var captchaToken = true;
 
                 if (rc == 1) {
@@ -281,6 +282,19 @@
 
                     var formData = new FormData(e.target);
                     formData.append("notch", args.notch);
+
+                    if (formsleads.forms[args.wrapperId]) {
+                        var hiddenValues = formsleads.forms[args.wrapperId].values;
+                        var hiddenValueKeys = Object.keys(hiddenValues);
+                        var fieldsAvailable = formsleads.forms[args.wrapperId].fields;
+                        if (hiddenValueKeys.length > 0) {
+                            hiddenValueKeys.forEach(function (v) {
+                                if (fieldsAvailable[v]) {
+                                    formData.set(fieldsAvailable[v], hiddenValues[v] || '');
+                                }
+                            })
+                        }
+                    }
     
                     var xmlHttp = new XMLHttpRequest();
     
@@ -336,8 +350,18 @@
             }
         }
 
+        function setFormFieldValue(wrapperId, fieldIndex, value) {
+            var fetchedForm = formsleads.forms[wrapperId];
+
+            if (fetchedForm && fetchedForm.rendered) {
+                formsleads.forms[wrapperId].values[fieldIndex] = value;
+            }
+        }
+
         window.formsleads = {
             params: getParams(),
+            forms: {},
+            setValue: setFormFieldValue,
             render: function (args) {
                 let fldsRipple = null;
                 let formContainer = null;
@@ -364,6 +388,7 @@
                     domReady(function() {
                         // DOM is loaded and ready for manipulation here
                         formContainer = formContainer || document.getElementById(args.wrapperId);
+                        var formFields = {};
 
                         if (fldsRipple) {
                             formContainer.removeChild(fldsRipple);
@@ -404,10 +429,11 @@
                         createTextElement(texts.belowTitle, customStyle.belowTitleText, formElement);
 
                         // Creating and adding form inputs
-                        res.fields.forEach(function (formInput, fieldIndex) {
-                            var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (fieldIndex + 1) });
+                        res.fields.forEach(function (formInput, index) {
+                            var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
                             var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, hiddenField);
                             formElement.appendChild(eleToAppend);
+                            formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });
 
                         window.renderedRCWidget = window.renderedRCWidget || {};
@@ -461,6 +487,8 @@
                         createTextElement(texts.belowSubmit, customStyle.belowSubmitText, formElement);
 
                         formElement.onsubmit = onFormsLeadsFormSubmit(args, res.recaptcha, errorElement, successElement, formsleadsBtn, formElement);
+
+                        formsleads.forms[args.wrapperId] = { rendered: true, fields: formFields, values: {} };
                     });
                 }).catch(function() {
                     console.error("error in appKey");
