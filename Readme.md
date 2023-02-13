@@ -20,6 +20,7 @@ Here is the basic code to integrate a form from FormsLeads.
 - `afterSubmit` func > A callback function which will be triggered after successfully submiting the form.
 - `text` object > Add texts in the form in different locations. Check the details below for configurations.
 - `hiddenFields` array > Hide any fields with simple configuration. Refer below for more details
+- `validate` array > Validate any textfields. Refer below for more details on implementation
 
 ## Custom styles
 Add css to each and every elements in the form, created using the formsleads. The following element keys are available to make your own form styles. Just add your css for each element as string.
@@ -81,4 +82,22 @@ Arguements for the function includes
 Usage
 ```
 formsleads.setValue(wrapperId, fieldIndex, Value)
+```
+
+## Validating a field
+Now you can add custom validation to any text field. Validating a phone number is available without any configuration. At the same time you can add regex for validating as per your requirement. It's very simple to add the validation as below.
+
+- Phone number validation requires the index(fieldIndex), type (phone), message (optional) and onsubmit (optional and default value is false)
+- Custom validation needs a regex to test against, index (fieldIndex) and a message
+
+`index` > The position or number of the field (1, 2, ...).
+`regex` > The regex to validate against.
+`message` > Message to show as error.
+`onsubmit` > default value is false. That means the validation happens on inputing the value. If it is true, then the validation happens only on submit.
+
+```
+validate: [
+    { index: 3, type: "phone", message: "Please enter a valid US phone number 1234567980.", onsubmit: true },
+    { index: 4, regex: "...", message: "Please enter a valid input." }
+]
 ```

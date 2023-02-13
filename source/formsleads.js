@@ -10,6 +10,8 @@
         var scriptName = "formsleads.min.js";
         var cssId = 'formsleads.min.css';
         var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@" + version + "/source/formsleads.min.css";
+        var usPhonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+        var phoneWarningMsg = "Please enter a valid phone number.";
 
         function domReady(fn) {
             // see if DOM is already available
@@ -104,12 +106,42 @@
             };
         }
 
+        function addValidationToInput(fieldIndex, element, list = []) {
+            list.forEach(function (listItem) {
+                if (listItem.index === fieldIndex) {
+                    if (listItem.type === "phone") {
+                        element.oninput = function () {
+                            if (!usPhonePattern.test(element.value)) {
+                                element.setCustomValidity(listItem.message || phoneWarningMsg)
+                                element.reportValidity()
+                            } else {
+                                if (!onsubmit) {
+                                    element.setCustomValidity('')
+                                }
+                            }
+                        }
+                    } else {
+                        element.oninput = function () {
+                            if (listItem.regex && !listItem.regex.test(element.value)) {
+                                element.setCustomValidity(listItem.message)
+                                if (!onsubmit) {
+                                    element.reportValidity();
+                                }
+                            } else {
+                                element.setCustomValidity('');
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         function makeItAHiddenField(fieldEl, value) {
             fieldEl.type = 'hidden';
             fieldEl.value = value || '';
         }
 
-        function createFormInput(details, successEl, errorEl, cs, hiddenF) {
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -136,6 +168,10 @@
                 inputElement.name = details.field_name;
                 inputElement.required = details.is_required == "true";
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
+
+                if (details.is_required == "true") {
+                    addValidationToInput(fieldIndex, inputElement, validationList);
+                }
 
                 
                 if (hiddenF) {
@@ -431,7 +467,7 @@
                         // Creating and adding form inputs
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, hiddenField);
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });
