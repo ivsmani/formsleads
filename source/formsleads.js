@@ -115,7 +115,7 @@
                                 element.setCustomValidity(listItem.message || phoneWarningMsg)
                                 element.reportValidity()
                             } else {
-                                if (!onsubmit) {
+                                if (!listItem.onsubmit) {
                                     element.setCustomValidity('')
                                 }
                             }
@@ -124,7 +124,7 @@
                         element.oninput = function () {
                             if (listItem.regex && !listItem.regex.test(element.value)) {
                                 element.setCustomValidity(listItem.message)
-                                if (!onsubmit) {
+                                if (!listItem.onsubmit) {
                                     element.reportValidity();
                                 }
                             } else {
@@ -169,9 +169,7 @@
                 inputElement.required = details.is_required == "true";
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
 
-                if (details.is_required == "true") {
-                    addValidationToInput(fieldIndex, inputElement, validationList);
-                }
+                addValidationToInput(fieldIndex, inputElement, validationList);
 
                 
                 if (hiddenF) {
