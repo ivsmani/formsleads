@@ -57,7 +57,9 @@ text: {
 ```
 
 ## Hidden Fields
-Text can be added in 4 locations of the form and use the below format to configure. Also those texts can be styled using above custom styles.
+Hide any fields in the form with a simple configuration. A list of objects with field index and the value is enough to hide all the field required.
+
+Note: The fields hidden will be automatically set as not required. So if you are trying to hide a field, please make sure that it is not a required field. In the case of "Select" type of field, the value should be the value that is already available in the options added via formsleads, otherwise it will be empty.
 
 index - field index which needs to be hidden
 value - default value for the same field

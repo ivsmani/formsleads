@@ -139,6 +139,7 @@
         function makeItAHiddenField(fieldEl, value) {
             fieldEl.type = 'hidden';
             fieldEl.value = value || '';
+            fieldEl.required = false;
         }
 
         function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList) {
@@ -211,6 +212,10 @@
                     var optionElement = document.createElement("option");
                     optionElement.innerHTML = option;
                     optionElement.value = option;
+
+                    if (hiddenF) {
+                        optionElement.selected = option === hiddenF.value;
+                    }
 
                     selectElement.appendChild(optionElement);
 
