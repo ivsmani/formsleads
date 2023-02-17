@@ -112,12 +112,13 @@
                     if (listItem.type === "phone") {
                         element.oninput = function () {
                             if (!usPhonePattern.test(element.value)) {
-                                element.setCustomValidity(listItem.message || phoneWarningMsg)
-                                element.reportValidity()
-                            } else {
+                                element.setCustomValidity(listItem.message || phoneWarningMsg);
+
                                 if (!listItem.onsubmit) {
-                                    element.setCustomValidity('')
+                                    element.reportValidity();
                                 }
+                            } else {
+                                element.setCustomValidity('');
                             }
                         }
                     } else {

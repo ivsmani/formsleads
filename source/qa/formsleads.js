@@ -113,6 +113,7 @@
                         element.oninput = function () {
                             if (!usPhonePattern.test(element.value)) {
                                 element.setCustomValidity(listItem.message || phoneWarningMsg);
+
                                 if (!listItem.onsubmit) {
                                     element.reportValidity();
                                 }
