@@ -17,10 +17,13 @@ Here is the basic code to integrate a form from FormsLeads.
 - `buttonText` string > Change submit button text of the form
 - `successText` string > Change success message text of the form
 - `customStyle` object > Add custom styles for each elements of the form
-- `afterSubmit` func > A callback function which will be triggered after successfully submiting the form.
-- `text` object > Add texts in the form in different locations. Check the details below for configurations.
+- `afterSubmit` func > A callback function which will be triggered after successfully submiting the form
+- `text` object > Add texts in the form in different locations. Check the details below for configurations
 - `hiddenFields` array > Hide any fields with simple configuration. Refer below for more details
 - `validate` array > Validate any textfields. Refer below for more details on implementation
+- `hideLabels` boolean > Hides the input labels if true
+- `hidePlaceholders` boolean > Hides the input placeholders if true
+- `customOptions` array > Add custom options list for any drop down fields
 
 ## Custom styles
 Add css to each and every elements in the form, created using the formsleads. The following element keys are available to make your own form styles. Just add your css for each element as string.
@@ -101,5 +104,22 @@ Now you can add custom validation to any text field. Validating a phone number i
 validate: [
     { index: 3, type: "phone", message: "Please enter a valid US phone number 1234567980.", onsubmit: true },
     { index: 4, regex: "...", message: "Please enter a valid input." }
+]
+```
+
+## Custom options for drop down
+You can make the options in any dropdown input dynamic with this custom options feature. The field targeting should be a select type. Use the below syntax to implement and it replaces the available options with custom options given. If you are dynamically changing the options, then the options key should be null to display the available options instead of custom options.
+
+Note: Always try to avoid this feature, since there is a risk of data mismatching.
+
+index - field index which you are targeting (It should be a select type field)
+options - An array of option values to show
+
+```
+customOptions: [
+    {
+        index: 1,
+        options: ["1", "2"]
+    }
 ]
 ```

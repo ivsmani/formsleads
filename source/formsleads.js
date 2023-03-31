@@ -143,7 +143,7 @@
             fieldEl.required = false;
         }
 
-        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList) {
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -166,7 +166,11 @@
                 }
                 
                 inputElement.type = details.type;
-                inputElement.placeholder = details.placeholder;
+
+                if (!hidePlaceholders) {
+                    inputElement.placeholder = details.placeholder;
+                }
+
                 inputElement.name = details.field_name;
                 inputElement.required = details.is_required == "true";
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
@@ -185,7 +189,7 @@
                 }
 
                 inputWrapper.appendChild(inputElement);
-                if (!hiddenF) {
+                if (!hiddenF && !hideLabels) {
                     inputWrapper.appendChild(labelElement);
                 }
             } else if (details.type === "select") {
@@ -209,7 +213,7 @@
                     makeItAHiddenField(selectElement, hiddenF.value);
                 }
 
-                details.options.forEach(function (option, op) {
+                (customOptions.options || details.options).forEach(function (option, op) {
                     var optionElement = document.createElement("option");
                     optionElement.innerHTML = option;
                     optionElement.value = option;
@@ -230,7 +234,7 @@
                 }
                 
                 inputWrapper.appendChild(selectElement);
-                if (!hiddenF) {
+                if (!hiddenF && !hideLabels) {
                     inputWrapper.appendChild(labelElement);
                 }
             } else if (['radio', 'checkbox'].includes(details.type)) {
@@ -407,6 +411,8 @@
                 let formContainer = null;
                 const customStyle = args.customStyle || {};
                 const texts = args.text || {};
+                const hidePlaceholders = args.hidePlaceholders;
+                const hideLabels = args.hideLabels;
 
                 domReady(function() {
                     injectCSS();
@@ -471,7 +477,8 @@
                         // Creating and adding form inputs
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate);
+                            var customOptions = (args.customOptions || []).find(function (co) { return co.index == (index + 1) }) || {};
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });
