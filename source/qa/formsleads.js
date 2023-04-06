@@ -354,19 +354,17 @@
                                 const myObj = JSON.parse(xmlHttp.responseText);
         
                                 if (myObj.status == 1) {
-                                    successEl.innerHTML = args.successText || myObj.suc_message;
-
-                                    formEle.reset();
-
-                                    if (window.grecaptcha) {
-                                        grecaptcha.reset(window.renderedRCWidget[args.notch]);
-                                    }
-
                                     if (args.afterSubmit && typeof args.afterSubmit == "function") {
                                         args.afterSubmit();
                                     }
 
+                                    successEl.innerHTML = args.successText || myObj.suc_message;
 
+                                    formEle.reset();
+                                    
+                                    if (window.grecaptcha) {
+                                        grecaptcha.enterprise.reset(window.renderedRCWidget[args.notch]);
+                                    }
                                 } else {
                                     errorEl.innerHTML = myObj.error_message;
                                 }
