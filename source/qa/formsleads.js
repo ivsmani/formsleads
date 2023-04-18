@@ -328,6 +328,8 @@
                     formEle.classList.add("disable-formsleads-form");
 
                     var formData = new FormData(e.target);
+                    var formDataObject = Object.fromEntries(formData.entries());
+
                     formData.append("notch", args.notch);
 
                     if (formsleads.forms[args.wrapperId]) {
@@ -355,7 +357,7 @@
         
                                 if (myObj.status == 1) {
                                     if (args.afterSubmit && typeof args.afterSubmit == "function") {
-                                        args.afterSubmit();
+                                        args.afterSubmit(formDataObject);
                                     }
 
                                     successEl.innerHTML = args.successText || myObj.suc_message;
@@ -416,6 +418,7 @@
                 const texts = args.text || {};
                 const hidePlaceholders = args.hidePlaceholders;
                 const hideLabels = args.hideLabels;
+                const hideSuccessMessage = args.hideSuccessMessage;
 
                 domReady(function() {
                     injectCSS();
@@ -470,6 +473,10 @@
 
                         var successElement = document.createElement("div");
                         successElement.classList.add('formsleads-success-msg');
+
+                        if (hideSuccessMessage) {
+                            successElement.style.display = "none";
+                        }
                         
                         var errorElement = document.createElement("div");
                         errorElement.classList.add('formsleads-error-msg');

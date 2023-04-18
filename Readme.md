@@ -17,13 +17,14 @@ Here is the basic code to integrate a form from FormsLeads.
 - `buttonText` string > Change submit button text of the form
 - `successText` string > Change success message text of the form
 - `customStyle` object > Add custom styles for each elements of the form
-- `afterSubmit` func > A callback function which will be triggered after successfully submiting the form
+- `afterSubmit` func > A callback function which will be triggered after successfully submiting the form. The first argument of the callback will be the form data in json format.
 - `text` object > Add texts in the form in different locations. Check the details below for configurations
 - `hiddenFields` array > Hide any fields with simple configuration. Refer below for more details
 - `validate` array > Validate any textfields. Refer below for more details on implementation
 - `hideLabels` boolean > Hides the input labels if true
 - `hidePlaceholders` boolean > Hides the input placeholders if true
 - `customOptions` array > Add custom options list for any drop down fields
+- `hideSuccessMessage` boolean > Hides the success message element when form is successfully submitted
 
 ## Custom styles
 Add css to each and every elements in the form, created using the formsleads. The following element keys are available to make your own form styles. Just add your css for each element as string.
