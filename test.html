@@ -11,7 +11,11 @@
 
             formsleads.render({
                 wrapperId: "fl-form",
-                notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09"
+                notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09",
+                hideSuccessMessage: true,
+                afterSubmit: (data) => {
+                    console.log(data)
+                }
             });
             formsleads.render({
                 wrapperId: "fl-form-2",
