@@ -45,6 +45,7 @@ customStyle: {
         select: "",     
         label: "",
     recaptchaWrapper: "",
+    recaptchaPopup: "",
     buttonWrapper: "",
         button: "",
     belowTitleText: "",
