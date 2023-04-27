@@ -725,6 +725,11 @@
                                 }
 
                                 popupDiv.classList.add("formsleads-recaptcha-popup");
+                                
+                                if (customStyle.recaptchaPopup) {
+                                    popupDiv.style = customStyle.recaptchaPopup;
+                                }
+                                
                                 popupDiv.appendChild(recaptchaWrapper);
                                 
                                 formElement.appendChild(popupDiv);
