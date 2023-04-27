@@ -106,11 +106,59 @@
             };
         }
 
-        function addValidationToInput(fieldIndex, element, list = []) {
-            list.forEach(function (listItem) {
+        // Phone number formating 123-456-7890
+        function formatPhoneNumber(value) {
+            if (!value) return value;
+
+            const phoneNumber = value.replace(/[^\d]/g, '');
+            const phoneNumberLength = phoneNumber.length;
+            
+            if (phoneNumberLength < 4) return phoneNumber;
+            
+            if (phoneNumberLength < 7) {
+              return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+            }
+
+            return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+        }
+
+        function getFormatField(formatList, fieldIndex) {
+            return formatList.find(fl => fl.index == fieldIndex);
+        }
+
+        function setInputValueFormated(element, formatItem) {
+            if (formatItem.type == "us-phone") {
+                element.value = formatPhoneNumber(element.value);
+            } else if (formatItem.type == "custom") {
+
+                if (typeof formatItem.onChange == "function") {
+                    element.value = formatItem.onChange(element.value);
+                }
+            }
+
+        }
+
+        function addValidationOrFormatToInput(fieldIndex, element, validationlist = [], formatList = []) {
+            const targetedFormatInputs = formatList.filter(fl => !validationlist.filter(vl => vl.index == fl.index).length);
+            
+            if (targetedFormatInputs.length) {
+                element.oninput = function () {
+                    setInputValueFormated(element, targetedFormatInputs[0]);
+                }
+            }
+
+            validationlist.forEach(function (listItem) {
                 if (listItem.index === fieldIndex) {
                     if (listItem.type === "phone") {
+                        const targetedFormatInput = getFormatField(formatList, fieldIndex);
+
+                        console.log(targetedFormatInput)
+
                         element.oninput = function () {
+                            if (targetedFormatInput) {
+                                setInputValueFormated(element, targetedFormatInput);
+                            }
+
                             if (!usPhonePattern.test(element.value)) {
                                 element.setCustomValidity(listItem.message || phoneWarningMsg);
 
@@ -123,6 +171,10 @@
                         }
                     } else {
                         element.oninput = function () {
+                            if (getFormatField(formatList, fieldIndex)) {
+                                element.value = formatPhoneNumber(element.value);
+                            }
+
                             if (listItem.regex && !listItem.regex.test(element.value)) {
                                 element.setCustomValidity(listItem.message)
                                 if (!listItem.onsubmit) {
@@ -247,7 +299,7 @@
             return dropdownWrapper;
         }
 
-        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey) {
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey, formatList) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -283,7 +335,7 @@
                 inputElement.required = details.is_required == "true";
                 inputElement.onkeydown = onInputValueChange(successEl, errorEl);
 
-                addValidationToInput(fieldIndex, inputElement, validationList);
+                addValidationOrFormatToInput(fieldIndex, inputElement, validationList, formatList);
                 
                 if (hiddenF) {
                     makeItAHiddenField(inputElement, hiddenF.value, inputWrapper);
@@ -624,7 +676,7 @@
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
                             var customOptions = (args.customOptions || []).find(function (co) { return co.index == (index + 1) }) || {};
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey);
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey, args.format);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });

@@ -11,7 +11,7 @@
 
             formsleads.render({
                 wrapperId: "fl-form",
-                notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09",
+                notch: "UXpmT1NJaFMwUUY2cGtvTm5wNnRGdz09",
                 // hideSuccessMessage: true,
                 customDropdown: true,
                 // hideAllMessages: true,
@@ -30,6 +30,8 @@
                         optionHover: ""
                     }
                 },
+                format: [{ index: 3, type: "us-phone" }, { index: 4, type: "custom", onChange: (value) => { console.log(value); return value + 1;} }],
+                validate: [{ index: 3, type: "phone" }],
                 afterSubmit: (data) => {
                     console.log(data)
                 }
