@@ -21,14 +21,20 @@ Here is the basic code to integrate a form from FormsLeads.
 - `text` object > Add texts in the form in different locations. Check the details below for configurations
 - `hiddenFields` array > Hide any fields with simple configuration. Refer below for more details
 - `validate` array > Validate any textfields. Refer below for more details on implementation
+- `format` array > Format any textfields. Refer below for more details on implementation
 - `hideLabels` boolean > Hides the input labels if true
 - `hidePlaceholders` boolean > Hides the input placeholders if true
 - `customOptions` array > Add custom options list for any drop down fields
 - `hideSuccessMessage` boolean > Hides the success message element when form is successfully submitted
+- `hideAllMessages` boolean > Hides the success and error messages and it's wrapper div
+- `customDropdown` boolean > If you want to style options of the select element, you should use a custom dropdown (It changes all the dropdown styles in a form)
+- `popupRecaptcha` string oneOf("inside", "outside") > Make the recaptcha shown in the pop up. Inside means inside the form and out side means in the document body
 
 ## Custom styles
 Add css to each and every elements in the form, created using the formsleads. The following element keys are available to make your own form styles. Just add your css for each element as string.
 Like this 👉🏻 `formTitle: "font-size: 30px; color: #e0e0e0;"`
+
+Note: From v1.2.0, you can add styles for the placeholders and also for the custom dropdowns.
 
 ```
 customStyle: {
@@ -45,6 +51,15 @@ customStyle: {
     aboveRecaptchaText: "",
     aboveSubmitText: "",
     belowSubmitText: "",
+    placeholder: "",
+    dropdown: {
+        wrapper: "",
+        select: "",
+        list: "",
+        firstOption: "",
+        option: "",
+        optionHover: ""
+    }
 }
 ```
 
@@ -105,6 +120,23 @@ Now you can add custom validation to any text field. Validating a phone number i
 validate: [
     { index: 3, type: "phone", message: "Please enter a valid US phone number 1234567980.", onsubmit: true },
     { index: 4, regex: "...", message: "Please enter a valid input." }
+]
+```
+
+## Formating a field
+Now you can format any text field value. Phone number formating for 111-111-1111 is available with type `us-phone`. At the same time you can use onChange event for formating as per your requirement. It's very simple to add formating as below.
+
+- US Phone number formating requires the index(fieldIndex) and type (us-phone)
+- Custom formating needs a function onChange, which should return a value, index (fieldIndex) and type (custom)
+
+`index` > The position or number of the field (1, 2, ...).
+`type` > oneOf("us-phone", "custom")
+`onChange` > Event function with the input value in first argument and should return a value to set in the input
+
+```
+format: [
+    { index: 3, type: "us-phone" },
+    { index: 4, type: "custom", onChange: (value) => { var formatedValue = value; ...; return formatedValue; } }
 ]
 ```
 
