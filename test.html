@@ -1,7 +1,7 @@
 <html>
     <body>
         <script src="./source/qa/formsleads.js?app-key=uutnbgstyvg4778djghk" ></script>
-        <div id="fl-form" ></div>
+        <div id="fl-form" style="width: 300px;" ></div>
         <div id="fl-form-2" ></div>
         <button onclick="onClick()" >onClick</button>
         <script>
@@ -12,7 +12,24 @@
             formsleads.render({
                 wrapperId: "fl-form",
                 notch: "bVc1dlhPR1FjVGZ5NkFINzBtTHh6UT09",
-                hideSuccessMessage: true,
+                // hideSuccessMessage: true,
+                customDropdown: true,
+                // hideAllMessages: true,
+                popupRecaptcha: "inside",
+                errorSubmit: (e) => {
+                    console.log(e)
+                },
+                customStyle: {
+                    placeholder: "",
+                    dropdown: {
+                        wrapper: "",
+                        select: "",
+                        list: "",
+                        firstOption: "",
+                        option: "",
+                        optionHover: ""
+                    }
+                },
                 afterSubmit: (data) => {
                     console.log(data)
                 }

@@ -9,7 +9,7 @@
         var recaptchaScriptID = "google-recaptcha";
         var scriptName = "formsleads.min.js";
         var cssId = 'formsleads.min.css';
-        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@" + version + "/source/formsleads.min.css";
+        var flCssUrl = "./source/formsleads.css";
         var usPhonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
         var phoneWarningMsg = "Please enter a valid phone number.";
 
@@ -50,7 +50,7 @@
             return {};
         }
 
-        function addRecaptchaScript(rcWrapper, rcWidget) {
+        function addRecaptchaScript(rcWrapper, rcWidget, callback) {
             // Find all script tags
             var scripts = document.getElementsByTagName("script");
             var noScriptFound = true;
@@ -71,13 +71,13 @@
                 head.appendChild(scriptEl);
 
                 window.onRecaptchaLoadCallback = function() {
-                    rcWidget(grecaptcha.enterprise.render(rcWrapper, { sitekey: recaptchaSiteKey }));
+                    rcWidget(grecaptcha.enterprise.render(rcWrapper, { sitekey: recaptchaSiteKey, callback }));
                 };
             } else {
                 // for more form recaptcha widgets goes here...
                 var grecaptchaInterval = setInterval(function() {
                     if (grecaptcha) {
-                        rcWidget(grecaptcha.enterprise.render(rcWrapper, { sitekey: recaptchaSiteKey }));
+                        rcWidget(grecaptcha.enterprise.render(rcWrapper, { sitekey: recaptchaSiteKey, callback }));
                         clearInterval(grecaptchaInterval);
                     }
                 }, 500);
@@ -137,13 +137,117 @@
             });
         }
 
-        function makeItAHiddenField(fieldEl, value) {
+        function makeItAHiddenField(fieldEl, value, wrapper) {
             fieldEl.type = 'hidden';
             fieldEl.value = value || '';
             fieldEl.required = false;
+
+            if (wrapper) {
+                wrapper.style.display = "none";
+            }
         }
 
-        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels) {
+        function addCSSinHead(className, styles) {
+            if (!(window.formsleadsStyleTags && window.formsleadsStyleTags.includes(className))) {
+                var css = className + ' { ' + styles +' }';
+                var style = document.createElement('style');
+                style.appendChild(document.createTextNode(css));
+                document.getElementsByTagName('head')[0].appendChild(style);
+                
+                if (window.formsleadsStyleTags) {
+                    window.formsleadsStyleTags.push(className);
+                } else {
+                    window.formsleadsStyleTags = [className];
+                }
+            }
+        }
+
+        function resetAllDropDowns(formKey) {
+            const dropdownList = window.formsleadsFormDropdownList && window.formsleadsFormDropdownList[formKey] || [];
+            
+            dropdownList.forEach(function (ddReset) {
+                if (typeof ddReset == "function") {
+                    ddReset();
+                }
+            });
+        }
+
+        function addResetToWindow(resetFunc, formKey) {
+            if (window.formsleadsFormDropdownList) {
+                window.formsleadsFormDropdownList[formKey].push(resetFunc);
+            } else {
+                window.formsleadsFormDropdownList = {};
+                window.formsleadsFormDropdownList[formKey] = [resetFunc];
+            }
+        }
+
+        function createCustomDropdown(options, label, selectEl, cs, formKey, onChange) {
+            var customStyle = cs.dropdown || {};
+            var defaultValue = "Select " + (['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'].includes(label.charAt(0)) ? "an " : "a ") + label;
+            var dropdownWrapper = document.createElement("div");
+            dropdownWrapper.classList.add("prevent-select");
+            dropdownWrapper.style.zIndex = 10;
+            dropdownWrapper.style = customStyle.wrapper || "";
+
+            
+            var selectDiv = document.createElement("div");
+            selectDiv.classList.add("formsleads-form-dropdown");
+            selectDiv.innerHTML = defaultValue;
+            selectDiv.style = customStyle.select || "";
+
+            var dropdownList = document.createElement("ul");
+            dropdownList.classList.add("formsleads-form-dropdown-ul");
+            dropdownList.style = customStyle.list || "";
+            
+            selectDiv.onclick = function (e) {
+                e.stopPropagation();
+                dropdownList.style.display = dropdownList.style.display === "block" ? "none" : "block";
+            }
+
+            var firstOption = document.createElement("li");
+            firstOption.classList.add("formsleads-form-dropdown-firstitem");
+            firstOption.innerHTML = defaultValue;
+            firstOption.style = customStyle.firstOption || "";
+            dropdownList.appendChild(firstOption);
+            firstOption.onclick = function () {
+                selectDiv.innerHTML = defaultValue;
+                dropdownList.style.display = "none";
+                selectEl.selectedIndex = 0;
+                onChange();
+            }
+
+            addResetToWindow(function resetDropdown() {
+                selectDiv.innerHTML = defaultValue;
+            }, formKey);
+
+            
+            options.forEach(function (opt, index) {
+                var optionEl = document.createElement("li");
+                optionEl.classList.add("formsleads-form-dropdown-item");
+                optionEl.innerHTML = opt;
+                optionEl.style = customStyle.option;
+                optionEl.onclick = function () {
+                    selectDiv.innerHTML = opt;
+                    dropdownList.style.display = "none";
+                    selectEl.selectedIndex = index + 1;
+                    onChange();
+                }
+
+                dropdownList.appendChild(optionEl);
+            });
+            
+
+            if (options.length > 0 && customStyle.optionHover) {
+                addCSSinHead(".formsleads-form-dropdown-item:hover", customStyle.optionHover);
+            }
+
+            dropdownWrapper.appendChild(selectDiv);
+            dropdownWrapper.appendChild(dropdownList);
+
+            return dropdownWrapper;
+        }
+
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -164,6 +268,10 @@
                 if (cs.input) {
                     inputElement.style = cs.input;
                 }
+
+                if (cs.placeholder) {
+                    addCSSinHead("input.other__input::placeholder", cs.placeholder);
+                }
                 
                 inputElement.type = details.type;
 
@@ -178,7 +286,7 @@
                 addValidationToInput(fieldIndex, inputElement, validationList);
                 
                 if (hiddenF) {
-                    makeItAHiddenField(inputElement, hiddenF.value);
+                    makeItAHiddenField(inputElement, hiddenF.value, inputWrapper);
                 }
 
                 var labelElement = document.createElement("label");
@@ -210,7 +318,7 @@
 
                 if (hiddenF) {
                     selectElement.hidden = 'hidden';
-                    makeItAHiddenField(selectElement, hiddenF.value);
+                    makeItAHiddenField(selectElement, hiddenF.value, inputWrapper);
                 }
 
                 (customOptions.options || details.options).forEach(function (option, op) {
@@ -237,6 +345,13 @@
                 if (!hiddenF && !hideLabels) {
                     inputWrapper.appendChild(labelElement);
                 }
+
+                if (!hiddenF && customDropdown) {
+                    selectElement.style.position = "absolute";
+                    selectElement.style.zIndex = -1;
+                    selectElement.style.opacity = 0;
+                    inputWrapper.appendChild(createCustomDropdown(customOptions.options || details.options, details.label, selectElement, cs, formKey, onInputValueChange(successEl, errorEl)));
+                }
             } else if (['radio', 'checkbox'].includes(details.type)) {
                 inputWrapper.classList.remove("formsleads-form__input-wrapper");
                 inputWrapper.classList.add("formsleads-form__radio-wrapper");
@@ -262,7 +377,7 @@
                     radioElement.onchange = onInputValueChange(successEl, errorEl);
 
                     if (hiddenF) {
-                        makeItAHiddenField(radioElement, hiddenF.value);
+                        makeItAHiddenField(radioElement, hiddenF.value, inputWrapper);
                     }
 
                     radioLabel.innerHTML = option;
@@ -308,19 +423,20 @@
             .catch((err) => Promise.reject(err));
         }
 
-        function addRecaptcha(rc, wrapper, rcWidget) {
-            if (rc == 1) {
-                return addRecaptchaScript(wrapper, rcWidget);
+        function addRecaptcha(rc, wrapper, rcWidget, callback) {
+            if (rc) {
+                return addRecaptchaScript(wrapper, rcWidget, callback);
             }
         }
 
-        function onFormsLeadsFormSubmit(args, rc, errorEl, successEl, submitBtn, formEle) {
-            return function (e) {
-                e.preventDefault();
-                var captchaToken = true;
+        function restOfTheSubmit(eve, args, rc, errorEl, successEl, submitBtn, formEle) {
+            var captchaToken = true;
+            var e = eve ? eve : window.formsleadsRecaptchaEvent;
+            var formKey = args.notch + "-" + args.wrapperId;
 
-                if (rc == 1) {
-                    captchaToken = grecaptcha && grecaptcha.enterprise && grecaptcha.enterprise.getResponse(window.renderedRCWidget[args.notch]) || null;
+
+                if (rc) {
+                    captchaToken = grecaptcha && grecaptcha.enterprise && grecaptcha.enterprise.getResponse(window.renderedRCWidget[formKey]) || null;
                 }
 
                 if (captchaToken) {
@@ -362,12 +478,17 @@
 
                                     successEl.innerHTML = args.successText || myObj.suc_message;
 
+                                    resetAllDropDowns(formKey);
                                     formEle.reset();
                                     
                                     if (window.grecaptcha) {
-                                        grecaptcha.enterprise.reset(window.renderedRCWidget[args.notch]);
+                                        grecaptcha.enterprise.reset(window.renderedRCWidget[formKey]);
                                     }
                                 } else {
+                                    if (args.errorSubmit && typeof args.errorSubmit == "function") {
+                                        args.errorSubmit({ error: myObj.error_message });
+                                    }
+
                                     errorEl.innerHTML = myObj.error_message;
                                 }
                             }
@@ -380,6 +501,18 @@
                     errorEl.innerHTML = "Recaptcha error. Please check the recaptcha box."
                 }
 
+        }
+
+        function onFormsLeadsFormSubmit(args, rc, errorEl, successEl, submitBtn, formEle, popupDiv) {
+            return function (e) {
+                e.preventDefault();
+                if (popupDiv) {
+                    popupDiv.style.display = "flex";
+                    window.formsleadsRecaptchaEvent = e;
+                } else {
+                    restOfTheSubmit(e, args, rc, errorEl, successEl, submitBtn, formEle);
+                }
+                
                 
                 return false;
             }
@@ -414,11 +547,14 @@
             render: function (args) {
                 let fldsRipple = null;
                 let formContainer = null;
+                const formKey = args.notch + "-" + args.wrapperId;
                 const customStyle = args.customStyle || {};
                 const texts = args.text || {};
                 const hidePlaceholders = args.hidePlaceholders;
                 const hideLabels = args.hideLabels;
+                const hideAllMessages = args.hideAllMessages;
                 const hideSuccessMessage = args.hideSuccessMessage;
+                const customDropdown = args.customDropdown;
 
                 domReady(function() {
                     injectCSS();
@@ -488,7 +624,7 @@
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
                             var customOptions = (args.customOptions || []).find(function (co) { return co.index == (index + 1) }) || {};
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels);
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });
@@ -496,23 +632,60 @@
                         window.renderedRCWidget = window.renderedRCWidget || {};
 
                         rcWidget = function(widget) {
-                            window.renderedRCWidget[args.notch] = widget;
+                            window.renderedRCWidget[args.notch + "-" + args.wrapperId] = widget;
                         }
 
-                        var recaptchaWrapper = document.createElement("div");
-                        recaptchaWrapper.classList.add("formsleads-recaptcha-wrapper");
-                        if (customStyle.recaptchaWrapper) {
-                            recaptchaWrapper.style = customStyle.recaptchaWrapper;
+                        var formsleadsBtn = document.createElement("input");
+                        formsleadsBtn.type = "submit";
+                        formsleadsBtn.classList.add("formsleads-form-submit-btn");
+
+                        if (customStyle.button) {
+                            formsleadsBtn.style = customStyle.button;
                         }
-                        
+
+                        formsleadsBtn.value = args.buttonText || "Submit";
+                            
                         // Text above recaptcha
                         createTextElement(texts.aboveRecaptcha, customStyle.aboveRecaptchaText, formElement);
 
-                        formElement.appendChild(recaptchaWrapper);
-                        var rcWidget = addRecaptcha(res.recaptcha, recaptchaWrapper, rcWidget);
+                        var recaptchaNeeded = res.recaptcha == 1;
+                        var popupRecaptcha = ["inside", "outside"].includes(args.popupRecaptcha);
+                        var popupDiv = recaptchaNeeded && popupRecaptcha ? document.createElement("div") : null;
+
+                        function recaptchaCallback() {
+                            if (popupDiv) {
+                                restOfTheSubmit(null, args, recaptchaNeeded, errorElement, successElement, formsleadsBtn, formElement);
+                                popupDiv.style.display = "none";
+                            }
+                        }
+
+                        if (recaptchaNeeded) {
+
+                            var recaptchaWrapper = document.createElement("div");
+                            recaptchaWrapper.classList.add("formsleads-recaptcha-wrapper");
+                            if (customStyle.recaptchaWrapper) {
+                                recaptchaWrapper.style = customStyle.recaptchaWrapper;
+                            }
+                            
+                            if (popupRecaptcha) {
+                                if (args.popupRecaptcha === "inside") {
+                                    formContainer.style.position = "relative";
+                                }
+
+                                popupDiv.classList.add("formsleads-recaptcha-popup");
+                                popupDiv.appendChild(recaptchaWrapper);
+                                
+                                formElement.appendChild(popupDiv);
+                            } else {
+                                formElement.appendChild(recaptchaWrapper);
+                            }
+                            var rcWidget = addRecaptcha(recaptchaNeeded, recaptchaWrapper, rcWidget, recaptchaCallback);
+                        }
 
                         var messageContainer = document.createElement("div");
-                        formElement.appendChild(messageContainer);
+                        if (!hideAllMessages) {
+                            formElement.appendChild(messageContainer);
+                        }
                         
                         messageContainer.appendChild(successElement);
                         messageContainer.appendChild(errorElement);
@@ -523,16 +696,8 @@
                         if (customStyle.buttonWrapper) {
                             submitBtnWrapper.style = customStyle.buttonWrapper;
                         }
-                        
-                        var formsleadsBtn = document.createElement("input");
-                        formsleadsBtn.type = "submit";
-                        formsleadsBtn.classList.add("formsleads-form-submit-btn");
 
-                        if (customStyle.button) {
-                            formsleadsBtn.style = customStyle.button;
-                        }
 
-                        formsleadsBtn.value = args.buttonText || "Submit";
                         submitBtnWrapper.appendChild(formsleadsBtn);
 
                         // Text above Submit button
@@ -543,7 +708,7 @@
                         // Text below Submit button
                         createTextElement(texts.belowSubmit, customStyle.belowSubmitText, formElement);
 
-                        formElement.onsubmit = onFormsLeadsFormSubmit(args, res.recaptcha, errorElement, successElement, formsleadsBtn, formElement);
+                        formElement.onsubmit = onFormsLeadsFormSubmit(args, recaptchaNeeded, errorElement, successElement, formsleadsBtn, formElement, popupDiv);
 
                         formsleads.forms[args.wrapperId] = { rendered: true, fields: formFields, values: {} };
                     });

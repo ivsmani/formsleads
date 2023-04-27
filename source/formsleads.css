@@ -155,12 +155,83 @@
     background-color: #a0a0a0;
 }
 
+div.formsleads-form-dropdown {
+    width: 100%;
+    font-size: 14px;
+    outline: 0;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+    color: #000;
+    transition: .1s ease-out;
+    line-height: 24px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+div.formsleads-form-dropdown::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border: 7px solid transparent;
+    border-color: #9E9E9E transparent transparent transparent;
+    position: absolute;
+    top: 20px;
+    right: 15px;
+}
+
+.formsleads-form-dropdown-ul {
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #9E9E9E;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    margin-top: 5px;
+    display: none;
+}
+
+.formsleads-form-dropdown-item {
+    list-style: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.formsleads-form-dropdown-firstitem {
+    list-style: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.formsleads-form-dropdown-item:hover {
+    background-color: #e0e0e0;
+}
+
+.formsleads-recaptcha-popup {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(235, 235, 235, .5);
+    z-index: 1000;
+}
+
 .formsleads-recaptcha-wrapper {
     display: flex;
     justify-content: center;
     padding-bottom: 15px;
     padding-top: 15px;
-    border-top: 1px solid #e0e0e0;
 }
 
 .formsleads-success-msg {
@@ -236,4 +307,10 @@
         opacity: 0;
     }
 }
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+  }
   
