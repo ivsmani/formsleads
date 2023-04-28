@@ -225,7 +225,11 @@
 
         function addResetToWindow(resetFunc, formKey) {
             if (window.formsleadsFormDropdownList) {
-                window.formsleadsFormDropdownList[formKey].push(resetFunc);
+                if (window.formsleadsFormDropdownList[formKey]) {
+                    window.formsleadsFormDropdownList[formKey].push(resetFunc);
+                } else {
+                    window.formsleadsFormDropdownList[formKey] = [resetFunc];
+                }
             } else {
                 window.formsleadsFormDropdownList = {};
                 window.formsleadsFormDropdownList[formKey] = [resetFunc];

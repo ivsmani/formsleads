@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.2.1";
+        var version = "1.2.2";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -226,7 +226,11 @@
 
         function addResetToWindow(resetFunc, formKey) {
             if (window.formsleadsFormDropdownList) {
-                window.formsleadsFormDropdownList[formKey].push(resetFunc);
+                if (window.formsleadsFormDropdownList[formKey]) {
+                    window.formsleadsFormDropdownList[formKey].push(resetFunc);
+                } else {
+                    window.formsleadsFormDropdownList[formKey] = [resetFunc];
+                }
             } else {
                 window.formsleadsFormDropdownList = {};
                 window.formsleadsFormDropdownList[formKey] = [resetFunc];
