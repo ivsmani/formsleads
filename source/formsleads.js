@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.0.4";
+        var version = "1.2.1";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -555,11 +555,14 @@
 
         }
 
-        function onFormsLeadsFormSubmit(args, rc, errorEl, successEl, submitBtn, formEle, popupDiv) {
+        function onFormsLeadsFormSubmit(args, rc, errorEl, successEl, submitBtn, formEle, popupDiv, outsidePopup) {
             return function (e) {
                 e.preventDefault();
                 if (popupDiv) {
                     popupDiv.style.display = "flex";
+                    if (outsidePopup) {
+                        document.body.style.overflow = "hidden";
+                    }
                     window.formsleadsRecaptchaEvent = e;
                 } else {
                     restOfTheSubmit(e, args, rc, errorEl, successEl, submitBtn, formEle);
@@ -703,11 +706,13 @@
                         var recaptchaNeeded = res.recaptcha == 1;
                         var popupRecaptcha = ["inside", "outside"].includes(args.popupRecaptcha);
                         var popupDiv = recaptchaNeeded && popupRecaptcha ? document.createElement("div") : null;
+                        var outsidePopup = recaptchaNeeded && args.popupRecaptcha === "outside";
 
                         function recaptchaCallback() {
                             if (popupDiv) {
                                 restOfTheSubmit(null, args, recaptchaNeeded, errorElement, successElement, formsleadsBtn, formElement);
                                 popupDiv.style.display = "none";
+                                document.body.style.overflow = "auto";
                             }
                         }
 
@@ -765,7 +770,7 @@
                         // Text below Submit button
                         createTextElement(texts.belowSubmit, customStyle.belowSubmitText, formElement);
 
-                        formElement.onsubmit = onFormsLeadsFormSubmit(args, recaptchaNeeded, errorElement, successElement, formsleadsBtn, formElement, popupDiv);
+                        formElement.onsubmit = onFormsLeadsFormSubmit(args, recaptchaNeeded, errorElement, successElement, formsleadsBtn, formElement, popupDiv, outsidePopup);
 
                         formsleads.forms[args.wrapperId] = { rendered: true, fields: formFields, values: {} };
                     });
