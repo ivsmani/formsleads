@@ -1,7 +1,6 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.0.4";
         var apiUrl = "https://formsleads.com/staging/portal/api/Form_data";
         var postUrl = "https://formsleads.com/staging/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
