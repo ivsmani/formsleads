@@ -243,16 +243,24 @@
             dropdownWrapper.classList.add("prevent-select");
             dropdownWrapper.style.zIndex = 10;
             dropdownWrapper.style = customStyle.wrapper || "";
+            dropdownWrapper.tabIndex = 0;
 
+            var selectDivStyle = customStyle.placeholder || customStyle.select || "";
             
             var selectDiv = document.createElement("div");
             selectDiv.classList.add("formsleads-form-dropdown");
             selectDiv.innerHTML = defaultValue;
-            selectDiv.style = customStyle.select || "";
+            selectDiv.style = selectDivStyle;
 
             var dropdownList = document.createElement("ul");
             dropdownList.classList.add("formsleads-form-dropdown-ul");
             dropdownList.style = customStyle.list || "";
+
+            // Outside click handling
+            dropdownWrapper.onblur = function () {
+                dropdownList.style.display = "none";
+            }
+            // -------------------------------------------
             
             selectDiv.onclick = function (e) {
                 e.stopPropagation();
@@ -268,6 +276,7 @@
                 selectDiv.innerHTML = defaultValue;
                 dropdownList.style.display = "none";
                 selectEl.selectedIndex = 0;
+                selectDiv.style = selectDivStyle;
                 onChange();
             }
 
@@ -283,6 +292,7 @@
                 optionEl.style = customStyle.option;
                 optionEl.onclick = function () {
                     selectDiv.innerHTML = opt;
+                    selectDiv.style = customStyle.select || "";
                     dropdownList.style.display = "none";
                     selectEl.selectedIndex = index + 1;
                     onChange();

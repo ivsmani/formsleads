@@ -34,7 +34,7 @@ Here is the basic code to integrate a form from FormsLeads.
 Add css to each and every elements in the form, created using the formsleads. The following element keys are available to make your own form styles. Just add your css for each element as string.
 Like this 👉🏻 `formTitle: "font-size: 30px; color: #e0e0e0;"`
 
-Note: From v1.2.0, you can add styles for the placeholders and also for the custom dropdowns.
+Note: From v1.2.0, you can add styles for the placeholders and also for the custom dropdowns. Please add placeholder styles for custom dropdown in the dropdown styles.
 
 ```
 customStyle: {
@@ -56,6 +56,7 @@ customStyle: {
     dropdown: {
         wrapper: "",
         select: "",
+        placeholder: "",
         list: "",
         firstOption: "",
         option: "",

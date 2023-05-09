@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.2.2";
+        var version = "1.2.3";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -244,16 +244,24 @@
             dropdownWrapper.classList.add("prevent-select");
             dropdownWrapper.style.zIndex = 10;
             dropdownWrapper.style = customStyle.wrapper || "";
+            dropdownWrapper.tabIndex = 0;
 
+            var selectDivStyle = customStyle.placeholder || customStyle.select || "";
             
             var selectDiv = document.createElement("div");
             selectDiv.classList.add("formsleads-form-dropdown");
             selectDiv.innerHTML = defaultValue;
-            selectDiv.style = customStyle.select || "";
+            selectDiv.style = selectDivStyle;
 
             var dropdownList = document.createElement("ul");
             dropdownList.classList.add("formsleads-form-dropdown-ul");
             dropdownList.style = customStyle.list || "";
+            
+            // Outside click handling
+            dropdownWrapper.onblur = function () {
+                dropdownList.style.display = "none";
+            }
+            // -------------------------------------------
             
             selectDiv.onclick = function (e) {
                 e.stopPropagation();
@@ -267,6 +275,7 @@
             dropdownList.appendChild(firstOption);
             firstOption.onclick = function () {
                 selectDiv.innerHTML = defaultValue;
+                selectDiv.style = selectDivStyle;
                 dropdownList.style.display = "none";
                 selectEl.selectedIndex = 0;
                 onChange();
@@ -284,6 +293,7 @@
                 optionEl.style = customStyle.option;
                 optionEl.onclick = function () {
                     selectDiv.innerHTML = opt;
+                    selectDiv.style = customStyle.select || "";
                     dropdownList.style.display = "none";
                     selectEl.selectedIndex = index + 1;
                     onChange();
