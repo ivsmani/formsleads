@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.2.3";
+        var version = "1.2.4";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -313,7 +313,7 @@
             return dropdownWrapper;
         }
 
-        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey, formatList) {
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, formatList) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -357,13 +357,22 @@
 
                 var labelElement = document.createElement("label");
                 labelElement.innerHTML = details.label;
+
+                if (!disableLabelAnimation) {
+                    labelElement.classList.add("formsleads-form__field-label");
+                }
+
                 if (cs.label) {
                     labelElement.style = cs.label;
                 }
 
+                if (!hiddenF && !hideLabels && disableLabelAnimation) {
+                    inputWrapper.appendChild(labelElement);
+                }
+
                 inputWrapper.appendChild(inputElement);
 
-                if (!hiddenF && !hideLabels) {
+                if (!hiddenF && !hideLabels && !disableLabelAnimation) {
                     inputWrapper.appendChild(labelElement);
                 }
             } else if (details.type === "select") {
@@ -403,12 +412,21 @@
                 var labelElement = document.createElement("label");
                 labelElement.innerHTML = details.label;
 
+                if (!disableLabelAnimation) {
+                    labelElement.classList.add("formsleads-form__field-label");
+                }
+
                 if (cs.label) {
                     labelElement.style = cs.label;
                 }
                 
+                if (!hiddenF && !hideLabels && disableLabelAnimation) {
+                    inputWrapper.appendChild(labelElement);
+                }
+                
                 inputWrapper.appendChild(selectElement);
-                if (!hiddenF && !hideLabels) {
+
+                if (!hiddenF && !hideLabels && !disableLabelAnimation) {
                     inputWrapper.appendChild(labelElement);
                 }
 
@@ -459,7 +477,9 @@
                 });
 
                 var labelElement = document.createElement("label");
-                labelElement.classList.add("formsleads-check-radio-title");
+                if (!disableLabelAnimation) {
+                    labelElement.classList.add("formsleads-check-radio-title");
+                }
                 
                 if (cs.label) {
                     labelElement.style = cs.label;
@@ -561,7 +581,7 @@
                         }
                     };
                     
-                    xmlHttp.open("post", postUrl);
+                    xmlHttp.open("post", postUrl + '?appKey=' + formsleads.params["app-key"]);
                     xmlHttp.send(formData);
                 } else {
                     errorEl.innerHTML = "Recaptcha error. Please check the recaptcha box."
@@ -621,6 +641,7 @@
                 const texts = args.text || {};
                 const hidePlaceholders = args.hidePlaceholders;
                 const hideLabels = args.hideLabels;
+                const disableLabelAnimation = args.disableLabelAnimation;
                 const hideAllMessages = args.hideAllMessages;
                 const hideSuccessMessage = args.hideSuccessMessage;
                 const customDropdown = args.customDropdown;
@@ -693,7 +714,7 @@
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
                             var customOptions = (args.customOptions || []).find(function (co) { return co.index == (index + 1) }) || {};
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, customDropdown, formKey, args.format);
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, args.format);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });

@@ -23,6 +23,7 @@ Here is the basic code to integrate a form from FormsLeads.
 - `validate` array > Validate any textfields. Refer below for more details on implementation
 - `format` array > Format any textfields. Refer below for more details on implementation
 - `hideLabels` boolean > Hides the input labels if true
+- `disableLabelAnimation` boolean > Disables the default label color and animation on interaction if true
 - `hidePlaceholders` boolean > Hides the input placeholders if true
 - `customOptions` array > Add custom options list for any drop down fields
 - `hideSuccessMessage` boolean > Hides the success message element when form is successfully submitted
