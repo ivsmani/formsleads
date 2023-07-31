@@ -1,4 +1,4 @@
-# FormsLeads form creation cdn script and css [1.2.3]
+# FormsLeads form creation cdn script and css [1.2.4]
 
 `window.formsleads` will do all the magic.
 
