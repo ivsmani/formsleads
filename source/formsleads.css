@@ -42,7 +42,7 @@
     background-color: #fff;
 }
 
-.formsleads-form__input-wrapper label {
+.formsleads-form__input-wrapper .formsleads-form__field-label {
     position: absolute;
     font-size: 14px;
     left: 0;
@@ -61,13 +61,13 @@
     border-color: #6200EE;  
 }
 
-.formsleads-form__input-wrapper .other__input:focus + label {
+.formsleads-form__input-wrapper .other__input:focus + .formsleads-form__field-label {
     color: #6200EE;
     top: 0;
     transform: translateY(-50%) scale(.9);
 }
 
-.formsleads-form__input-wrapper .other__input:not(:placeholder-shown) + label {
+.formsleads-form__input-wrapper .other__input:not(:placeholder-shown) + .formsleads-form__field-label {
     top: 0;
     transform: translateY(-50%) scale(.9);
     color: #6200EE;
@@ -107,13 +107,13 @@
     border-color: #6200EE;  
 }
 
-.formsleads-form__input-wrapper select:focus + label {
+.formsleads-form__input-wrapper select:focus + .formsleads-form__field-label {
     color: #6200EE;
     top: 0;
     transform: translateY(-50%) scale(.9);
 }
 
-.formsleads-form__input-wrapper select:not(:placeholder-shown) + label {
+.formsleads-form__input-wrapper select:not(:placeholder-shown) + .formsleads-form__field-label {
     top: 0;
     transform: translateY(-50%) scale(.9);
     color: #6200EE;
