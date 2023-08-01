@@ -36,7 +36,8 @@
                 validate: [{ index: 3, type: "phone" }],
                 afterSubmit: (data) => {
                     console.log(data)
-                }
+                },
+                changeInput: [{ index: 1, to: "textarea", styles: "" }],
             });
             formsleads.render({
                 wrapperId: "fl-form-2",

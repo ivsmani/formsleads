@@ -312,7 +312,7 @@
             return dropdownWrapper;
         }
 
-        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, formatList) {
+        function createFormInput(details, successEl, errorEl, cs, fieldIndex, hiddenF, validationList, customOptions, changeInput, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, formatList) {
             var basicType = ['text', 'email', 'number'].includes(details.type);
             var inputWrapper = document.createElement("div");
 
@@ -326,11 +326,14 @@
 
 
             if (basicType) {
-                var inputElement = document.createElement("input");
+                var renderTextArea = changeInput && changeInput.to === "textarea";
+                var inputElement = document.createElement(renderTextArea ? "textarea" : "input");
                 
                 inputElement.classList.add("other__input");
                 
-                if (cs.input) {
+                if (renderTextArea) {
+                    inputElement.style = changeInput.styles || "";
+                } else if (cs.input) {
                     inputElement.style = cs.input;
                 }
 
@@ -358,6 +361,10 @@
                 labelElement.innerHTML = details.label;
                 if (!disableLabelAnimation) {
                     labelElement.classList.add("formsleads-form__field-label");
+
+                    if (renderTextArea) {
+                        labelElement.classList.add("formsleads__textarea-label");
+                    }
                 }
 
                 if (cs.label) {
@@ -715,7 +722,8 @@
                         res.fields.forEach(function (formInput, index) {
                             var hiddenField = (args.hiddenFields || []).find(function (hf) { return hf.index == (index + 1) });
                             var customOptions = (args.customOptions || []).find(function (co) { return co.index == (index + 1) }) || {};
-                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, args.format);
+                            var changeInput = (args.changeInput || []).find(function (ci) { return ci.index == (index + 1) });
+                            var eleToAppend = createFormInput(formInput, successElement, errorElement, customStyle, index + 1, hiddenField, args.validate, customOptions, changeInput, hidePlaceholders, hideLabels, disableLabelAnimation, customDropdown, formKey, args.format);
                             formElement.appendChild(eleToAppend);
                             formFields[index + 1] = ['radio', 'checkbox'].includes(formInput.type) ? (formInput.field_name + "[]") : formInput.field_name;
                         });
