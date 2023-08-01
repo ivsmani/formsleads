@@ -139,7 +139,7 @@
         }
 
         function addValidationOrFormatToInput(fieldIndex, element, validationlist = [], formatList = []) {
-            const targetedFormatInputs = formatList.filter(fl => !validationlist.filter(vl => vl.index == fl.index).length);
+            const targetedFormatInputs = formatList.filter(fl => !validationlist.filter(vl => vl.index == fl.index).length && fl.index === fieldIndex);
             
             if (targetedFormatInputs.length) {
                 element.oninput = function () {
@@ -333,13 +333,16 @@
                 inputElement.classList.add("other__input");
                 
                 if (renderTextArea) {
-                    inputElement.style = changeInput.styles || "";
+                    if (changeInput.styles) {
+                        inputElement.style = changeInput.styles;
+                    }
                 } else if (cs.input) {
                     inputElement.style = cs.input;
                 }
 
                 if (cs.placeholder) {
                     addCSSinHead("input.other__input::placeholder", cs.placeholder);
+                    addCSSinHead("textarea.other__input::placeholder", cs.placeholder);
                 }
                 
                 inputElement.type = details.type;

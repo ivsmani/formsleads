@@ -166,14 +166,14 @@ You can change any text input elements to textarea, so that you can have the fun
 
 index - field index which you are targeting (It should be a text input type field)
 to - value should be "textarea"
-style - here you can style with css that you know.
+styles - here you can style with css that you know.
 
 ```
 changeInput: [
     {
         index: 1,
         to: "textarea",
-        style: ""
+        styles: ""
     }
 ]
 ```
