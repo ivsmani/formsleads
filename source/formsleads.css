@@ -57,6 +57,10 @@
     pointer-events: none;
 }
 
+.formsleads-form__input-wrapper .formsleads-form__field-label.formsleads__textarea-label {
+    top: 30%;
+}
+
 .formsleads-form__input-wrapper .other__input:focus {
     border-color: #6200EE;  
 }

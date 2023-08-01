@@ -26,6 +26,7 @@ Here is the basic code to integrate a form from FormsLeads.
 - `disableLabelAnimation` boolean > Disables the default label color and animation on interaction if true
 - `hidePlaceholders` boolean > Hides the input placeholders if true
 - `customOptions` array > Add custom options list for any drop down fields
+- `changeInput` array > Change input type to textarea for any textfields. Check the configuration details below.
 - `hideSuccessMessage` boolean > Hides the success message element when form is successfully submitted
 - `hideAllMessages` boolean > Hides the success and error messages and it's wrapper div
 - `customDropdown` boolean > If you want to style options of the select element, you should use a custom dropdown (It changes all the dropdown styles in a form)
@@ -156,6 +157,23 @@ customOptions: [
     {
         index: 1,
         options: ["1", "2"]
+    }
+]
+```
+
+## Changing a Input element to Textarea
+You can change any text input elements to textarea, so that you can have the functionalities of a text area.
+
+index - field index which you are targeting (It should be a text input type field)
+to - value should be "textarea"
+style - here you can style with css that you know.
+
+```
+changeInput: [
+    {
+        index: 1,
+        to: "textarea",
+        style: ""
     }
 ]
 ```
