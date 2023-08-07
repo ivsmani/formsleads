@@ -508,7 +508,7 @@
         }
 
         async function fetchFormData(appKey, notch) {
-            return await fetch(apiUrl + '?appkey=' + appKey + '&notch=' + notch)
+            return await fetch(apiUrl + '?appKey=' + appKey + '&notch=' + notch)
             .then((res) => {
                 if (res.ok) {
                     return res.json();
