@@ -1,14 +1,16 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var apiUrl = "https://formsleads.com/portal/api/Form_data";
-        var postUrl = "https://formsleads.com/portal/api/Addlead";
+        var version = "1.2.8a";
+        var apiUrl = "https://formsleads.com/staging/portal/api/Form_data";
+        var postUrl = "https://formsleads.com/staging/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
         var recaptchaSiteKey = "6Ld9h6cgAAAAAHWk24MkMs-N8JMASQIC-tG7oTMK";
         var recaptchaScriptID = "google-recaptcha";
         var scriptName = "formsleads.min.js";
         var cssId = 'formsleads.min.css';
-        var flCssUrl = "./source/formsleads.css";
+        var flCssUrl = "https://cdn.jsdelivr.net/gh/ivsmani/formsleads@" + version + "/source/formsleads.min.css";
+        // var flCssUrl = "/source/formsleads.css";
         var usPhonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
         var phoneWarningMsg = "Please enter a valid phone number.";
 
@@ -507,7 +509,7 @@
         }
 
         async function fetchFormData(appKey, notch) {
-            return await fetch(apiUrl + '?appkey=' + appKey + '&notch=' + notch)
+            return await fetch(apiUrl + '?appKey=' + appKey + '&notch=' + notch)
             .then((res) => {
                 if (res.ok) {
                     return res.json();
@@ -661,6 +663,8 @@
                     injectCSS();
                     formContainer = document.getElementById(args.wrapperId);
 
+                    if (!formContainer) return;
+
                     // initial Loader implementation 
                     fldsRipple = document.createElement('div');
                     fldsRipple.classList.add('flds-ripple');
@@ -678,6 +682,8 @@
                         // DOM is loaded and ready for manipulation here
                         formContainer = formContainer || document.getElementById(args.wrapperId);
                         var formFields = {};
+
+                        if (!formContainer) return;
 
                         if (fldsRipple) {
                             formContainer.removeChild(fldsRipple);
@@ -826,6 +832,8 @@
                     domReady(function() {
                         injectCSS();
                         formContainer = document.getElementById(args.wrapperId);
+
+                        if (!formContainer) return;
                         
                         if (fldsRipple) {
                             formContainer.removeChild(fldsRipple);
