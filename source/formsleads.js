@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.2.8";
+        var version = "1.2.8a";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -660,6 +660,8 @@
                     injectCSS();
                     formContainer = document.getElementById(args.wrapperId);
 
+                    if (!formContainer) return;
+
                     // initial Loader implementation 
                     fldsRipple = document.createElement('div');
                     fldsRipple.classList.add('flds-ripple');
@@ -677,6 +679,8 @@
                         // DOM is loaded and ready for manipulation here
                         formContainer = formContainer || document.getElementById(args.wrapperId);
                         var formFields = {};
+
+                        if (!formContainer) return;
 
                         if (fldsRipple) {
                             formContainer.removeChild(fldsRipple);
@@ -825,6 +829,8 @@
                     domReady(function() {
                         injectCSS();
                         formContainer = document.getElementById(args.wrapperId);
+
+                        if (!formContainer) return;
                         
                         if (fldsRipple) {
                             formContainer.removeChild(fldsRipple);
