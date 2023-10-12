@@ -119,6 +119,7 @@ Now you can add custom validation to any text field. Validating a phone number i
 `regex` > The regex to validate against.
 `message` > Message to show as error.
 `onsubmit` > default value is false. That means the validation happens on inputing the value. If it is true, then the validation happens only on submit.
+`onblur` > default value is false. That means the validation happens on inputing the value. If it is true, then the validation happens on focus out.
 
 ```
 validate: [
