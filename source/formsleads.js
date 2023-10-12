@@ -1,7 +1,7 @@
 /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
 (
     function installFormleads() {
-        var version = "1.2.8a";
+        var version = "1.2.9";
         var apiUrl = "https://formsleads.com/portal/api/Form_data";
         var postUrl = "https://formsleads.com/portal/api/Addlead";
         var recaptchaURL = "https://www.recaptcha.net/recaptcha/enterprise.js?onload=onRecaptchaLoadCallback&render=explicit";
@@ -152,8 +152,6 @@
                     if (listItem.type === "phone") {
                         const targetedFormatInput = getFormatField(formatList, fieldIndex);
 
-                        console.log(targetedFormatInput)
-
                         element.oninput = function () {
                             if (targetedFormatInput) {
                                 setInputValueFormated(element, targetedFormatInput);
@@ -175,13 +173,26 @@
                                 element.value = formatPhoneNumber(element.value);
                             }
 
-                            if (listItem.regex && !listItem.regex.test(element.value)) {
+                            if (listItem.regex && !listItem.regex.test(element.value) && !listItem.onblur) {
                                 element.setCustomValidity(listItem.message)
                                 if (!listItem.onsubmit) {
                                     element.reportValidity();
                                 }
                             } else {
                                 element.setCustomValidity('');
+                            }
+                        }
+                        
+                        if (listItem.onblur) {
+                            element.onblur = function () {
+                                if (listItem.regex && !listItem.regex.test(element.value)) {
+                                    element.setCustomValidity(listItem.message)
+                                    if (!listItem.onsubmit) {
+                                        element.reportValidity();
+                                    }
+                                } else {
+                                    element.setCustomValidity('');
+                                }
                             }
                         }
                     }

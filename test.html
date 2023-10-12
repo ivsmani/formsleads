@@ -33,7 +33,7 @@
                     }
                 },
                 format: [{ index: 3, type: "us-phone" }, { index: 4, type: "custom", onChange: (value) => { console.log(value); return value + 1;} }],
-                validate: [{ index: 3, type: "phone" }],
+                validate: [{ index: 3, type: "phone" }, { index: 1, regex: /^\S+$/, message: "Please enter a without space.", onblur: true }],
                 afterSubmit: (data) => {
                     console.log(data)
                 },
